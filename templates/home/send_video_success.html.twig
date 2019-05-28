@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Vídeo Enviado{% endblock %}
+
+{% block body %}
+    <div class="alert alert-success" role="alert">
+        Vídeo enviado com sucesso!
+    </div>
+    <br><br>
+    <h4>Usuário admin acessando a lista de vídeos</h4>
+    <br>
+    <table class="table mt-6">
+        <thead>
+        <tr>
+            <th scope="col">Nome do Usuário</th>
+            <th scope="col">Vídeo</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for video in videos %}
+            <tr>
+                <td>{{ video.name }}</td>
+                <td><a href="/uploads/videos/{{ video.video }}">Download do Vídeo</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

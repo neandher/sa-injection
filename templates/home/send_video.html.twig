@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Envie um Vídeo{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="offset-md-3 col-md-6 offset-md-3 mt-3">
+            <form method="POST" action="{{ path('send_video') }}" novalidate enctype="multipart/form-data">
+                {{ form_widget(form) }}
+                <button type="submit" class="btn btn-primary">Enviar</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
