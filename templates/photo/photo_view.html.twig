@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ photo.title }}{% endblock %}
+
+{% block body %}
+    <div class="card mb-3">
+        <img class="card-img-top"
+             src="{% if not photo.file %}http://lorempixel.com/1200/280/nature{% else %}{{ asset('uploads/photos/') ~ photo.file }}{% endif %}" alt="">
+        <div class="card-body">
+            <p class="card-text">{{ photo.title }}</p>
+            <p class="card-text"><small class="text-muted">Por {{ photo.user.email }}</small></p>
+        </div>
+    </div>
+{% endblock %}

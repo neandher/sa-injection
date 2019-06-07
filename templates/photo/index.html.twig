@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="card-deck">
+    {% for photo in photos %}
+        {% if loop.index0 % 3 == 0 %}
+            </div>
+            <div class="card-deck mt-3">
+        {% endif %}
+        <div class="card col-md-4" style="padding-left: 0; padding-right: 0">
+            <a href="{{ path('photo_view', {id: photo.id}) }}">
+                <img src="{% if not photo.file %}http://lorempixel.com/440/280/nature?i={{ loop.index0 }}{% else %}{{ asset('uploads/photos/') ~ photo.file }}{% endif %}"
+                     class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title">{{ photo.title }}</h5>
+                    {#Vulneravel a injection#}
+                    <a href="{% if not photo.file %}http://lorempixel.com/440/280/nature?i={{ loop.index0 }}{% else %}{{ asset('uploads/photos/') ~ photo.file }}{% endif %}"
+                       class="btn btn-primary btn-sm">Download</a>
+                    <p class="card-text">
+                        <small class="text-muted">Por {{ photo.user.email }}</small>
+                    </p>
+                </div>
+            </a>
+        </div>
+    {% endfor %}
+    </div>
+{% endblock %}

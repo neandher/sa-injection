@@ -3,11 +3,12 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\PostRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\PhotoRepository")
  */
-class Post
+class Photo
 {
     /**
      * @ORM\Id()
@@ -17,19 +18,31 @@ class Post
     private $id;
 
     /**
+     * @param mixed $id
+     * @return Photo
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+        return $this;
+    }
+
+    /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
      */
     private $title;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $image;
+    private $file;
 
     /**
-     * @ORM\Column(type="text")
+     * @ORM\ManyToOne(targetEntity="App\Entity\User")
+     * @ORM\JoinColumn(nullable=false)
      */
-    private $content;
+    private $user;
 
     public function getId(): ?int
     {
@@ -48,26 +61,26 @@ class Post
         return $this;
     }
 
-    public function getImage(): ?string
+    public function getFile(): ?string
     {
-        return $this->image;
+        return $this->file;
     }
 
-    public function setImage(?string $image): self
+    public function setFile(?string $file): self
     {
-        $this->image = $image;
+        $this->file = $file;
 
         return $this;
     }
 
-    public function getContent(): ?string
+    public function getUser(): ?User
     {
-        return $this->content;
+        return $this->user;
     }
 
-    public function setContent(string $content): self
+    public function setUser(?User $user): self
     {
-        $this->content = $content;
+        $this->user = $user;
 
         return $this;
     }
