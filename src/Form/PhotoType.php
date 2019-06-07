@@ -8,6 +8,7 @@ use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 class PhotoType extends AbstractType
@@ -29,9 +30,11 @@ class PhotoType extends AbstractType
                 'mapped' => false,
                 'constraints' => [
                     new NotBlank(),
+                    new File([
+                        'mimeTypes' => 'image/*'
+                    ])
                 ]
-            ])
-        ;
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver)

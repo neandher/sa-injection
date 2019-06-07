@@ -13,9 +13,10 @@
                      class="card-img-top" alt="...">
                 <div class="card-body">
                     <h5 class="card-title">{{ photo.title }}</h5>
-                    {#Vulneravel a injection#}
-                    <a href="{% if not photo.file %}http://lorempixel.com/440/280/nature?i={{ loop.index0 }}{% else %}{{ asset('uploads/photos/') ~ photo.file }}{% endif %}"
-                       class="btn btn-primary btn-sm">Download</a>
+                    {% if photo.file %}
+                        <a href="{{ path('photo_download', {id: photo.id}) }}"
+                           class="btn btn-primary btn-sm">Download</a>
+                    {% endif %}
                     <p class="card-text">
                         <small class="text-muted">Por {{ photo.user.email }}</small>
                     </p>

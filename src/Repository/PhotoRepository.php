@@ -25,65 +25,33 @@ class PhotoRepository extends ServiceEntityRepository
     /**
      * @param null $search
      * @return mixed
-     * @throws DBALExceptionAlias
      */
     public function findAllPhotos($search = null)
     {
-        $conn = $this->getEntityManager()->getConnection();
-        $sql = '
-            SELECT p.id, title, file, u.email
-            FROM photo p 
-            INNER JOIN user u on p.user_id = u.id            
-            ';
+        $qb = $this->createQueryBuilder('p')
+            ->innerJoin('p.user', 'u')
+            ->addSelect('u')
+            ->orderBy('p.id', 'DESC');
 
         if ($search && $search != '') {
-            $sql .= " WHERE title like '%" . $search . "%' ";
+            $qb->where('p.title like :search')
+                ->setParameter('search', '%' . $search . '%');
         }
 
-        $stmt = $conn->prepare($sql);
-        $stmt->execute();
-        $arrayPhotos = $stmt->fetchAll();
-
-        $ar = [];
-        foreach ($arrayPhotos as $arrayPhoto){
-            $ar[] = (new Photo())
-                ->setId($arrayPhoto['id'])
-                ->setTitle($arrayPhoto['title'])
-                ->setFile($arrayPhoto['file'])
-                ->setUser((new User())->setEmail($arrayPhoto['email']));
-        }
-
-        return $ar;
+        return $qb->getQuery()->getResult();
     }
 
     /**
-     * Modelo vulnerável a Sql Injection
-     *
-     * Adicionar uma aspas simples na URL
-     * Adicionar ao final da URL: ;truncate table photo;
-     * Usar um usuário do banco com menos permissões
-     *
      * @param $id
      * @return Photo|null
-     * @throws DBALExceptionAlias
+     * @throws NonUniqueResultExceptionAlias
      */
     public function findOneById($id): ?Photo
     {
-        $conn = $this->getEntityManager()->getConnection();
-        $sql = '
-            SELECT p.id, title, file, u.email
-            FROM photo p 
-            INNER JOIN user u on p.user_id = u.id
-            WHERE p.id = ' . $id . '
-            ';
-        $stmt = $conn->prepare($sql);
-        $stmt->execute();
-        $arrayPhoto = $stmt->fetch();
-
-        return (new Photo())
-            ->setTitle($arrayPhoto['title'])
-            ->setFile($arrayPhoto['file'])
-            ->setUser((new User())->setEmail($arrayPhoto['email']));
+        return $this->createQueryBuilder('p')
+            ->where('p.id = :id')->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
 }

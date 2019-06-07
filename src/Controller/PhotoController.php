@@ -7,10 +7,12 @@ use App\Form\PhotoType;
 use Doctrine\DBAL\DBALException as DBALExceptionAlias;
 use Doctrine\ORM\NonUniqueResultException as NonUniqueResultExceptionAlias;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
 
 class PhotoController extends AbstractController
@@ -35,7 +37,7 @@ class PhotoController extends AbstractController
      * @Route("/photo/{id}", name="photo_view")
      * @param $id
      * @return Response
-     * @throws DBALExceptionAlias
+     * @throws NonUniqueResultExceptionAlias
      */
     public function photoView($id)
     {
@@ -78,5 +80,26 @@ class PhotoController extends AbstractController
         return $this->render('photo/send_photo.html.twig', [
             'form' => $form->createView()
         ]);
+    }
+
+    /**
+     * @Route("/photo/{id}/download", name="photo_download")
+     * @param $id
+     * @return Response
+     * @throws NonUniqueResultExceptionAlias
+     */
+    public function photoDownload($id)
+    {
+        $photo = $this->getDoctrine()->getRepository(Photo::class)->findOneById($id);
+
+        $response = new BinaryFileResponse('uploads/photos/' . $photo->getFile());
+        // Create the disposition of the file
+        $disposition = $response->headers->makeDisposition(
+            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+            $photo->getFile()
+        );
+        $response->headers->set('Content-Disposition', $disposition);
+
+        return $response;
     }
 }
